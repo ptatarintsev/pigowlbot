@@ -71,10 +71,11 @@ func main() {
 	//if err != nil {
 	//	log.Fatal(err)
 	//}
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
+	//u := tgbotapi.NewUpdate(0)
+	//u.Timeout = 60
 
-	updates, err := bot.GetUpdatesChan(u)
+	//updates, err := bot.GetUpdatesChan(u)
+	updates := bot.ListenForWebhook("/" + token.BotToken)
 
 	http.HandleFunc("/", MainHandler)
 	go http.ListenAndServe(":8080", nil)
