@@ -78,7 +78,7 @@ func main() {
 	updates := bot.ListenForWebhook("/" + token.BotToken)
 
 	http.HandleFunc("/", MainHandler)
-	go http.ListenAndServe(":8080", nil)
+	go http.ListenAndServe(":9090", nil)
 	//updates := bot.ListenForWebhook("/" + bot.Token)
 	//go http.ListenAndServeTLS(":8443", "fullchain.pem", "privkey.pem", nil)
 
