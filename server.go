@@ -98,11 +98,14 @@ func getDownloads() string {
 		packsMap[pack.Pack.ID] = pack.Pack.Name
 	}
 
-	today := time.Now().Add(-7*24*time.Hour).Truncate(24 * time.Hour).Unix()
+	weekAgo := time.Now().Add(-7*24*time.Hour).Truncate(24 * time.Hour).Unix()
+	log.Println(weekAgo)
 
 	var packStats []PackStatResponse
 	for _, packStat := range packsStatResponse.PacksStat {
-		if packStat.Timestamp >= today {
+		log.Println(packStat.ID)
+		log.Println(packStat.Timestamp)
+		if packStat.Timestamp >= weekAgo {
 			packStats = append(packStats, packStat)
 		}
 	}
