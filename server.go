@@ -92,7 +92,7 @@ func getPackages() string {
 	return strings.Join(parts,"\n")
 }
 
-func getDownloads() string {
+func getDownloads(period int64) string {
 	packsResponse := getPacksResponse()
 	packsStatResponse := getPacksStatResponse()
 
@@ -101,14 +101,9 @@ func getDownloads() string {
 		packsMap[pack.Pack.ID] = pack.Pack.Name
 	}
 
-	//var parts []string
-	weekAgo := time.Now().Add(-7*24*time.Hour).Truncate(24 * time.Hour).Unix()
-	//parts = append(parts, strconv.FormatInt(weekAgo, 10))
-
 	var packStats []PackStatResponse
 	for _, packStat := range packsStatResponse.PacksStat {
-		//parts = append(parts, strconv.FormatInt(packStat.Timestamp, 10))
-		if packStat.Timestamp >= weekAgo {
+		if packStat.Timestamp >= period {
 			packStats = append(packStats, packStat)
 		}
 	}
@@ -150,8 +145,11 @@ func main() {
 				case "getpackages":
 					msg := tgbotapi.NewMessage(update.Message.Chat.ID, getPackages())
 					bot.Send(msg)
-				case "getdownloads":
-					msg := tgbotapi.NewMessage(update.Message.Chat.ID, getDownloads())
+				case "getweeklydownloads":
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, getDownloads(time.Now().Add(-7*24*time.Hour).Truncate(24 * time.Hour).Unix()))
+					bot.Send(msg)
+				case "getdailydownloads":
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, getDownloads(time.Now().Add(24*time.Hour).Truncate(24 * time.Hour).Unix()))
 					bot.Send(msg)
 				}
 		}
