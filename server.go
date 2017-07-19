@@ -35,7 +35,7 @@ type PackResponse struct {
 }
 
 type PackStatResponse struct {
-	time.Time  `json:"timestamp"`
+	Timestamp int64  `json:"timestamp"`
 	ID int  `json:"id"`
 }
 
@@ -65,6 +65,20 @@ func getPacksResponse() *GetPacksResponse {
 	return response
 }
 
+func getPacksStatResponse() *GetPacksStatResponse {
+	url := "http://pigowl.com:8080/getPacksStat"
+
+	res, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer res.Body.Close()
+
+	response := new(GetPacksStatResponse) 
+	json.NewDecoder(res.Body).Decode(response)
+	return response
+}
+
 func getPackages() string {
 	response := getPacksResponse()
 
@@ -76,23 +90,27 @@ func getPackages() string {
 }
 
 func getDownloads() string {
-	url := "http://pigowl.com:8080/getPacksStat"
+	packsResponse := getPacksResponse()
+	packsStatResponse := getPacksStatResponse()
 
-	res, err := http.Get(url)
-	if err != nil {
-		log.Fatal(err)
+	packsMap := make(map[int]string)
+	for _, pack := range packsResponse.Packs {
+		packsMap[pack.Pack.ID] = pack.Pack.Name
 	}
-	defer res.Body.Close()
 
-	response := new(GetPacksStatResponse) 
-	json.NewDecoder(res.Body).Decode(response)
+	today := time.Now().Add(-7*24*time.Hour).Truncate(24 * time.Hour).Unix()
 
-	//var parts []string
-	//for _, pack := range response.Packs {
-	//	parts = append(parts, pack.Pack.Name)
-	//}
-	//return strings.Join(parts,"\n")
-	return url
+	var packStats []PackStatResponse
+	for _, packStat := range packsStatResponse.PacksStat {
+		if packStat.Timestamp >= today {
+			packStats = append(packStats, packStat)
+		}
+	}
+	var parts []string
+	for _, packStat := range packStats {
+		parts = append(parts, packsMap[packStat.ID])
+	}
+	return strings.Join(parts,"\n")
 }
 
 func main() {
