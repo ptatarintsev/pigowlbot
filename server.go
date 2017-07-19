@@ -75,9 +75,11 @@ func getPacksStatResponse() *GetPacksStatResponse {
 	}
 	defer res.Body.Close()
 
-	response := new(GetPacksStatResponse) 
+	result := new(GetPacksStatResponse)
+	response := make([]PackStatResponse, 0)
 	json.NewDecoder(res.Body).Decode(response)
-	return response
+	result.PacksStat = response
+	return result
 }
 
 func getPackages() string {
