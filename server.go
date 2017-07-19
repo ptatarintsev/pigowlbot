@@ -75,9 +75,9 @@ func getPacksStatResponse() *GetPacksStatResponse {
 	}
 	defer res.Body.Close()
 
-	result := new(GetPacksStatResponse)
 	response := make([]PackStatResponse, 0)
 	json.NewDecoder(res.Body).Decode(response)
+	result := new(GetPacksStatResponse)
 	result.PacksStat = response
 	return result
 }
@@ -101,22 +101,28 @@ func getDownloads() string {
 		packsMap[pack.Pack.ID] = pack.Pack.Name
 	}
 
-	var parts []string
+	//var parts []string
 	weekAgo := time.Now().Add(-7*24*time.Hour).Truncate(24 * time.Hour).Unix()
-	parts = append(parts, strconv.FormatInt(weekAgo, 10))
+	//parts = append(parts, strconv.FormatInt(weekAgo, 10))
 
 	var packStats []PackStatResponse
 	for _, packStat := range packsStatResponse.PacksStat {
-		parts = append(parts, strconv.FormatInt(packStat.Timestamp, 10))
+		//parts = append(parts, strconv.FormatInt(packStat.Timestamp, 10))
 		if packStat.Timestamp >= weekAgo {
 			packStats = append(packStats, packStat)
 		}
 	}
-	//var parts []string
+
+	downloadsMap := make(map[string]int)
 	for _, packStat := range packStats {
-		parts = append(parts, packsMap[packStat.ID])
+		downloadsMap[packsMap[packStat.ID]]++
 	}
-	return strings.Join(parts,"\n")
+
+	var result []string
+	for k, v := range downloadsMap {
+		result = append(result, k + " " + strconv.Itoa(v))
+	}
+	return strings.Join(result,"\n")
 }
 
 func main() {
