@@ -62,7 +62,7 @@ func getPacksResponse() *GetPacksResponse {
 	defer res.Body.Close()
 
 	response := new(GetPacksResponse) 
-	json.NewDecoder(res.Body).Decode(response)
+	json.NewDecoder(res.Body).Decode(&response)
 	return response
 }
 
