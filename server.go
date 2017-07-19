@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"pigowlbot/token"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -46,6 +47,36 @@ type GetPacksResponse struct {
 
 type GetPacksStatResponse struct {
 	PacksStat  []PackStatResponse
+}
+
+type sortedMap struct {
+	m map[string]int
+	s []string
+}
+
+func (sm *sortedMap) Len() int {
+	return len(sm.m)
+}
+
+func (sm *sortedMap) Less(i, j int) bool {
+	return sm.m[sm.s[i]] > sm.m[sm.s[j]]
+}
+
+func (sm *sortedMap) Swap(i, j int) {
+	sm.s[i], sm.s[j] = sm.s[j], sm.s[i]
+}
+
+func sortedKeys(m map[string]int) []string {
+	sm := new(sortedMap)
+	sm.m = m
+	sm.s = make([]string, len(m))
+	i := 0
+	for key, _ := range m {
+	    sm.s[i] = key
+	    i++
+	}
+	sort.Sort(sm)
+	return sm.s
 }
 
 func MainHandler(resp http.ResponseWriter, _ *http.Request) {
@@ -114,8 +145,8 @@ func getDownloads(period int64) string {
 	}
 
 	var result []string
-	for k, v := range downloadsMap {
-		result = append(result, k + ", " + strconv.Itoa(v))
+	for _, v := range sortedKeys(downloadsMap) {
+		result = append(result, v + ", " + strconv.Itoa(downloadsMap[v]))
 	}
 	if len(result) > 0 {
 		return strings.Join(result,"\n")
