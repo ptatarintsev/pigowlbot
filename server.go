@@ -85,7 +85,7 @@ func main() {
 
 	for update := range updates {
 		command := update.Message.Command()
-		if command == nill || commnad == "" {
+		if command == nil || commnad == "" {
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Hi there!")
 			//msg.ReplyToMessageID = update.Message.MessageID
 			bot.Send(msg)
