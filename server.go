@@ -67,7 +67,7 @@ func getPacksResponse() *GetPacksResponse {
 }
 
 func getPacksStatResponse() *GetPacksStatResponse {
-	url := "http://pigowl.com:8080/getPacksStat"
+	url := "http://pigowl.com:8090/getPacksStat"
 
 	res, err := http.Get(url)
 	if err != nil {
