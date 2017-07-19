@@ -38,17 +38,17 @@ type GetPacksResponse struct {
 }
 
 func MainHandler(resp http.ResponseWriter, _ *http.Request) {
-    resp.Write([]byte("Hi there! I'm PigowlTestBot!"))
+	resp.Write([]byte("Hi there! I'm PigowlTestBot!"))
 }
 
 func main() {
 	url := "http://pigowl.com:8080/getPacks"
 
-    	res, err := http.Get(url)
+	res, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
 	}
-    	defer res.Body.Close()
+	defer res.Body.Close()
 	
 	response := new(GetPacksResponse) 
 	json.NewDecoder(res.Body).Decode(response)
@@ -84,9 +84,17 @@ func main() {
 	//go http.ListenAndServeTLS(":8443", "fullchain.pem", "privkey.pem", nil)
 
 	for update := range updates {
-		log.Printf("%+v\n", update)
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, strings.Join(parts," "))
-		msg.ReplyToMessageID = update.Message.MessageID
-		bot.Send(msg)
+		command := update.Message.Command()
+		if command == nill || commnad == "" {
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Hi there!")
+			//msg.ReplyToMessageID = update.Message.MessageID
+			bot.Send(msg)
+		} else {
+			switch command {
+				case "getpackages":
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, strings.Join(parts,"\n"))
+					bot.Send(msg)
+				}
+		}
 	}
 }
