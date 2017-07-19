@@ -115,9 +115,12 @@ func getDownloads(period int64) string {
 
 	var result []string
 	for k, v := range downloadsMap {
-		result = append(result, k + " " + strconv.Itoa(v))
+		result = append(result, k + ", " + strconv.Itoa(v))
 	}
-	return strings.Join(result,"\n")
+	if len(result) > 0 {
+		return strings.Join(result,"\n")
+	}
+	return "There were not any downloads :'("
 }
 
 func main() {
