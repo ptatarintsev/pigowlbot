@@ -60,6 +60,17 @@ func getDownloads(period int64) string {
 	return "There were not any downloads :'("
 }
 
+func getRealGames(period int64) int {
+	realGamesResponse := api.GetRealGames()
+	var result int
+	for _, realGame := range realGamesResponse.Games {
+		if realGame.Timestamp >= period {
+			result++
+		}
+	}
+	return result
+}
+
 func main() {
 	bot, err := tgbotapi.NewBotAPI(token.BotToken)
 	if err != nil {
@@ -90,6 +101,12 @@ func main() {
 					bot.Send(msg)
 				case "getdailydownloads":
 					msg := tgbotapi.NewMessage(update.Message.Chat.ID, getDownloads(time.Now().Truncate(24 * time.Hour).Unix()))
+					bot.Send(msg)
+				case "getdailyrealgames":
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, strconv.Itoa(getRealGames(time.Now().Truncate(24 * time.Hour).Unix())))
+					bot.Send(msg)
+				case "getweeklyrealgames":
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, strconv.Itoa(getRealGames(time.Now().Add(-7*24*time.Hour).Truncate(24 * time.Hour).Unix())))
 					bot.Send(msg)
 				}
 		}
