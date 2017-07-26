@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"pigowlbot/token"
 	"strconv"
 	"strings"
 	"time"
@@ -12,7 +11,8 @@ import (
 	"gopkg.in/telegram-bot-api.v4"
 
 	"pigowlbot/api"
-	"pigowlbot/sort"
+	"pigowlbot/token"
+	"pigowlbot/sort1"
 )
 
 func MainHandler(resp http.ResponseWriter, _ *http.Request) {
@@ -39,6 +39,17 @@ func getPackagesName() map[int]string {
 	return packageIdNameMap
 }
 
+func formatDownloadsMessage(sortedMap *sort1.SortedMap) string {
+	var result []string
+	for _, v := range sortedMap.S {
+		result = append(result, v + ", " + strconv.Itoa(sortedMap.M[v]))
+	}
+	if len(result) > 0 {
+		return strings.Join(result,"\n")
+	}
+	return "There were not any downloads :'("
+}
+
 func getDownloads(period int64) string {
 	packageIdNameMap := getPackagesName()
 	packsStatResponse := api.GetPackagesStatistics()
@@ -50,14 +61,8 @@ func getDownloads(period int64) string {
 		}
 	}
 
-	var result []string
-	for _, v := range sort.SortedKeys(downloadsMap) {
-		result = append(result, v + ", " + strconv.Itoa(downloadsMap[v]))
-	}
-	if len(result) > 0 {
-		return strings.Join(result,"\n")
-	}
-	return "There were not any downloads :'("
+	sortedMap := sort1.SortedKeys(downloadsMap)
+	return formatDownloadsMessage(sortedMap)
 }
 
 func getRealGames(period int64) int {
