@@ -127,7 +127,7 @@ func main() {
 					msg := tgbotapi.NewMessage(update.Message.Chat.ID, formatDownloadsMessage(getDownloads(0)))
 					bot.Send(msg)
 				case "getdiffdownloads":
-					msg := tgbotapi.NewMessage(update.Message.Chat.ID, formatDiffDownloadsMessage(getDownloads(time.Now().Truncate(24 * time.Hour).Unix()),	getDownloads(time.Now().Add(-7*24*time.Hour).Truncate(24 * time.Hour).Unix()))
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, formatDiffDownloadsMessage(getDownloads(time.Now().Truncate(24 * time.Hour).Unix()),	getDownloads(time.Now().Add(-7*24*time.Hour).Truncate(24 * time.Hour).Unix())))
 					bot.Send(msg)
 				}
 		}
