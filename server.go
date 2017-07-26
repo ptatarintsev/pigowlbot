@@ -108,8 +108,8 @@ func main() {
 				case "getweeklyrealgames":
 					msg := tgbotapi.NewMessage(update.Message.Chat.ID, strconv.Itoa(getRealGames(time.Now().Add(-7*24*time.Hour).Truncate(24 * time.Hour).Unix())))
 					bot.Send(msg)
-				case "getallrealgames":
-					msg := tgbotapi.NewMessage(update.Message.Chat.ID, strconv.Itoa(getRealGames(0)))
+				case "getalldownloads":
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, getDownloads(0))
 					bot.Send(msg)
 				}
 		}
