@@ -12,7 +12,7 @@ import (
 
 	"pigowlbot/api"
 	"pigowlbot/token"
-	"pigowlbot/sort1"
+	"pigowlbot/sorting"
 )
 
 func MainHandler(resp http.ResponseWriter, _ *http.Request) {
@@ -39,10 +39,10 @@ func getPackagesName() map[int]string {
 	return packageIdNameMap
 }
 
-func formatDownloadsMessage(sortedMap *sort1.SortedMap) string {
+func formatDownloadsMessage(sortedMap *sorting.SortedMap) string {
 	var result []string
-	for _, v := range sortedMap.S {
-		result = append(result, v + ", " + strconv.Itoa(sortedMap.M[v]))
+	for _, v := range sortedMap.Keys {
+		result = append(result, v + ", " + strconv.Itoa(sortedMap.Original[v]))
 	}
 	if len(result) > 0 {
 		return strings.Join(result,"\n")
@@ -50,10 +50,10 @@ func formatDownloadsMessage(sortedMap *sort1.SortedMap) string {
 	return "There were not any downloads :'("
 }
 
-func formatDiffDownloadsMessage(sortedMap1 *sort1.SortedMap, sortedMap2 *sort1.SortedMap) string {
+func formatDiffDownloadsMessage(updatedMap *sorting.SortedMap, dailyMap *sorting.SortedMap) string {
 	var result []string
-	for _, v := range sortedMap1.S {
-		result = append(result, v + ", " + strconv.Itoa(sortedMap1.M[v]) + "(" + strconv.Itoa(sortedMap2.M[v]) + ")")
+	for _, v := range updatedMap.Keys {
+		result = append(result, v + ", " + strconv.Itoa(updatedMap.Original[v]) + " (" + strconv.Itoa(dailyMap.Original[v]) + ")")
 	}
 	if len(result) > 0 {
 		return strings.Join(result,"\n")
@@ -61,7 +61,7 @@ func formatDiffDownloadsMessage(sortedMap1 *sort1.SortedMap, sortedMap2 *sort1.S
 	return "There were not any downloads :'("
 }
 
-func getDownloads(period int64) *sort1.SortedMap {
+func getDownloads(period int64) *sorting.SortedMap {
 	packageIdNameMap := getPackagesName()
 	packsStatResponse := api.GetPackagesStatistics()
 
@@ -72,7 +72,7 @@ func getDownloads(period int64) *sort1.SortedMap {
 		}
 	}
 
-	return sort1.SortedKeys(downloadsMap)
+	return sorting.SortedKeys(downloadsMap)
 }
 
 func getRealGames(period int64) int {
