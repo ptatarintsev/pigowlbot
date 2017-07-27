@@ -12,7 +12,7 @@ import (
 
 	"pigowlbot/api"
 	"pigowlbot/token"
-	"pigowlbot/sorting"
+	"pigowlbot/sort"
 )
 
 func MainHandler(resp http.ResponseWriter, _ *http.Request) {
@@ -39,7 +39,7 @@ func getPackagesName() map[int]string {
 	return packageIdNameMap
 }
 
-func formatDownloadsMessage(sortedMap *sorting.SortedMap) string {
+func formatDownloadsMessage(sortedMap *sort.SortedMap) string {
 	var result []string
 	for _, v := range sortedMap.Keys {
 		result = append(result, v + ", " + strconv.Itoa(sortedMap.Original[v]))
@@ -50,7 +50,7 @@ func formatDownloadsMessage(sortedMap *sorting.SortedMap) string {
 	return "There were not any downloads :'("
 }
 
-func formatDiffDownloadsMessage(updatedMap *sorting.SortedMap, dailyMap *sorting.SortedMap) string {
+func formatDiffDownloadsMessage(updatedMap *sort.SortedMap, dailyMap *sort.SortedMap) string {
 	var result []string
 	for _, v := range updatedMap.Keys {
 		result = append(result, v + ", " + strconv.Itoa(updatedMap.Original[v]) + " (" + strconv.Itoa(dailyMap.Original[v]) + ")")
@@ -61,7 +61,7 @@ func formatDiffDownloadsMessage(updatedMap *sorting.SortedMap, dailyMap *sorting
 	return "There were not any downloads :'("
 }
 
-func getDownloads(period int64) *sorting.SortedMap {
+func getDownloads(period int64) *sort.SortedMap {
 	packageIdNameMap := getPackagesName()
 	packsStatResponse := api.GetPackagesStatistics()
 
@@ -72,7 +72,7 @@ func getDownloads(period int64) *sorting.SortedMap {
 		}
 	}
 
-	return sorting.SortedKeys(downloadsMap)
+	return sort.SortedKeys(downloadsMap)
 }
 
 func getRealGames(period int64) int {
